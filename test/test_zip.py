@@ -31,6 +31,12 @@ def zip_moves():
         shutil.move(os.path.join(current_dir, file), destination_dir)
 
 
+@pytest.fixture()
+def delete_zip():
+    path = os.path.abspath('resources/test.zip')
+    os.remove(path)
+
+
 def test_check_pdf(create_zip, zip_moves):
     with ZipFile('resources/test.zip') as zip_:
         with zip_.open('sample.pdf', 'r') as pdf_f:
@@ -53,7 +59,9 @@ def test_check_csv(create_zip, zip_moves):
     with ZipFile('resources/test.zip') as zip_:
         with zip_.open('username.csv', 'r') as csv_file:
             row_ = [row for row in csv_file]
-            assert row_[0] == b'Username; Identifier;First name;Last name\n'
+            assert row_[0] == b'Username; Identifier;First name;Last name\r\n'
     os.remove('resources/test.zip')
 
 
+def test_delete_zip(delete_zip):
+    print('Архив удален')
